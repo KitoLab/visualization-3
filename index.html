@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>可視化（時間変化）</title>
+	<style>
+	.link {
+		stroke: #999;
+		opacity: 0.9;
+		cursor: crosshair;
+	}
+	#panel {
+		border: 2px #000000;
+		border: dashed 2px #5b8bd0;
+		float: left;
+		width: 350px;
+		height: 300px;
+		margin-bottom: 20px;
+	}
+	#info {
+		border: 2px #FF0000;
+		width: 350px;
+		height: 280px;
+		border: dashed 2px #5b8bd0;
+		float:left;
+	}
+	#chart {
+		float: left;
+		margin-right: 10px;
+      	border: dashed 2px #5b8bd0;
+      	width: 800px;
+      	height: 600px;
+	}
+	.node {
+		opacity: 0.8;
+		fill: #FF0000;
+	}
+
+	</style>
+</head>
+<body>
+
+	<!-- グラフ 描画領域 -->
+	<div id="chart"></div>
+	<!------------------>
+
+
+	<!-- 操作領域 -->
+	<div id="panel">
+	    <button class="start button" id="start_button" onclick="time_passes()">スタート</button>
+	    <!--再生速度：
+	    <select id="speed" onChange="speed_change()">
+	    	<option value="5000">すごく遅い</option>
+		    <option value="3000">遅い</option>
+		    <option value="2000" selected>普通</option>
+		    <option value="1500">速い</option>
+		    <option value="500">すごくはやい</option>
+	    </select>
+	    <button class="stop button" id="stop_button" onclick="stop_chat()">ストップ</button>-->
+	    <b class="isstop"></b>
+	    <p class="time"></p>
+	    <p class="comment"></p>
+  	</div>
+  	<!------------>
+
+  	<!-- ノード情報領域 -->
+  	<div id="info">
+  		<!--次数ランキング-->
+  	</div>
+  	<!----------------->
+
+  	<!-- javascriptの呼び出し -->
+	<script src="https://d3js.org/d3.v3.js" charset="utf-8"></script>
+	<script src="channel_0_text_label.json" charset="utf-8"></script>
+	<script src="graphEvent.js" charset="utf-8"></script>
+	<script src="transitionNetworkGraph.js" charset="utf-8"></script>
+	<script src="readChat.js" charset="utf-8"></script>
+	<!------------------------>
+
+</body>
+</html>
