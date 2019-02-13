@@ -1,6 +1,10 @@
 var node_data = JSON.parse(node_data);
 var chats = JSON.parse(chat);
 var time = 0;
+var comment_content = d3.select("body").select("p.comment");
+var comment_content_datetime =  d3.select("body").select("p.datetime");
+var comment_content_data = JSON.parse(comment_content_data);
+var information = d3.select("body").select("div.info");
 
 // 定数 名前はてきとう
 
@@ -15,13 +19,18 @@ const INCREASE_THICKNESS = 0.25;
 
 // メイン
 function time_passes(){
+
+	if(time > chats[chats.length - 1].order){
+		return;
+	}
 		
-	var comment = time + '/' + chats[chats.length - 1].order + ' ';
-	d3.select("p.comment").text(comment);
+	var nowtimeview = time + '/' + chats[chats.length - 1].order + ' ';
+	d3.select("p.time").text(nowtimeview);
 
 	read_chat(time);
 
 	time += 1;
+	
 
 }
 
@@ -33,6 +42,32 @@ function time_passes(){
 // （linksのsource, targetにはidでなくnodesのindexを与えてやる必要があるため、）
 function id_to_index(received_id){
 	return nodes.findIndex(node => node.id == received_id);
+}
+
+function get_label_from_id(received_id){
+	label_index = node_data.findIndex(node => node.id == received_id);
+	return node_data[label_index].label;
+}
+
+function get_location_from_id(received_id){
+	label_index = node_data.findIndex(node => node.id == received_id);
+	return node_data[label_index].location;	
+}
+
+function get_comment_from_order(received_order){
+	content_index = comment_content_data.findIndex(comm => comm.order == received_order);
+	content = comment_content_data[content_index];
+
+	output = content.content_text;
+	return output;
+}
+
+function get_datetime_from_order(received_order){
+	content_index = comment_content_data.findIndex(comm => comm.order == received_order);
+	content = comment_content_data[content_index];
+
+	output = content.createdDateTime;
+	return output;
 }
 
 // 地点timeのchat内容を読み込んでlinks, nodesにpushする関数
@@ -66,7 +101,8 @@ function read_chat(time){
 	});
 
 	append_node.forEach( function(nod, key) {
-		nodes.push({"id": nod.id, "r": MIN_NODE_SIZE});
+		nodes.push({"id": nod.id, "r": MIN_NODE_SIZE, "location": get_location_from_id(nod.id), "label": get_label_from_id(nod.id)});
+		//labels.push({"node_index": id_to_index(nod.id), "text": get_label_from_id(nod.id)});
 	});
 
 	// labelの更新
@@ -85,21 +121,24 @@ function read_chat(time){
 			// 追加のないリンクには特に何もしない
 		}else{
 			links[key].thickness += INCREASE_THICKNESS;
-			console.log(links[key].length);
 			links[key].length = Math.floor(links[key].length * 0.5);
-			console.log(links[key].length);
+			links[key].count += 1;
 			append_link.splice(check, 1);
 		}
 	});
 
 	append_link.forEach( function(lnk, key) {
 		if(lnk['source'] > lnk['target']){
-			links.push({"source": lnk['target'], "target": lnk['source'], "length": DEFAULT_LINK_DISTANCE, "thickness": DEFAULT_THICKNESS});
+			links.push({"source": lnk['target'], "target": lnk['source'], "length": DEFAULT_LINK_DISTANCE, "thickness": DEFAULT_THICKNESS, "count": 1});
 		} else {
-			links.push({"source": lnk['source'], "target": lnk['target'], "length": DEFAULT_LINK_DISTANCE, "thickness": DEFAULT_THICKNESS});
+			links.push({"source": lnk['source'], "target": lnk['target'], "length": DEFAULT_LINK_DISTANCE, "thickness": DEFAULT_THICKNESS, "count": 1});
 		}
 	});
 
+	//内容表示
+	comment_content.text(get_comment_from_order(time));
+	comment_content_datetime.text(get_datetime_from_order(time));
+	console.log(get_comment_from_order(time));
 
 	// 時間を進める
 	time += 1;
